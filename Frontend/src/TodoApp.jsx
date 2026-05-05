@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { register, login, getTodos, createTodo, updateTodo, deleteTodo } from "./api";
+import { login, getTodos, createTodo, deleteTodo, setAuthToken } from "./api";
 import Register from "./Register";
 
 export default function TodoApp() {
@@ -10,51 +10,93 @@ export default function TodoApp() {
     const [title, setTitle] = useState("");
     const [error, setError] = useState("");
     const [showRegister, setShowRegister] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+
+    // Fetch todos when token changes (login/logout)
+    const fetchTodos = async () => {
+        setLoading(true);
+        setError("");
+        try {
+            const res = await getTodos();
+            setTodos(res.data.data);
+        } catch (error) {
+            setError("Failed to fetch todos");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    React.useEffect(() => {
+        let ignore = false;
+        const fetchAndSetTodos = async () => {
+            if (token) {
+                setAuthToken(token);
+                try {
+                    setLoading(true);
+                    setError("");
+                    const res = await getTodos();
+                    if (!ignore) setTodos(res.data.data);
+                } catch (error) {
+                    if (!ignore) setError("Failed to fetch todos");
+                } finally {
+                    if (!ignore) setLoading(false);
+                }
+            } else {
+                setTodos([]);
+            }
+        };
+        fetchAndSetTodos();
+        return () => { ignore = true; };
+    }, [token]);
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        setLoading(true);
+        setError("");
         try {
             const res = await login({ email, password });
             setToken(res.data.token);
-            setError("");
-            fetchTodos(res.data.token);
-        } catch (err) {
-            setError(err.response?.data?.message || "Login failed");
+        } catch (error) {
+            setError(error.response?.data?.message || "Login failed");
+        } finally {
+            setLoading(false);
         }
     };
 
-    const fetchTodos = async (tk = token) => {
-        try {
-            const res = await getTodos(tk);
-            setTodos(res.data.data);
-        } catch (err) {
-            setError("Failed to fetch todos");
-        }
-    };
 
     const handleAdd = async (e) => {
         e.preventDefault();
+        setLoading(true);
+        setError("");
         try {
-            await createTodo(token, { title });
+            await createTodo({ title });
             setTitle("");
             fetchTodos();
-        } catch (err) {
+        } catch (error) {
             setError("Failed to add todo");
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleDelete = async (id) => {
+        setLoading(true);
+        setError("");
         try {
-            await deleteTodo(token, id);
+            await deleteTodo(id);
             fetchTodos();
-        } catch (err) {
+        } catch (error) {
             setError("Failed to delete todo");
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
-            <h1 className="text-3xl font-bold mb-4">Todo App</h1>
+            <h1 className="text-3xl font-bold mb-4 bg-blue-200 rounded-xl p-2">Todo App</h1>
+            {loading && <div className="text-gray-600 mb-2">Loading...</div>}
             {!token ? (
                 showRegister ? (
                     <>
@@ -85,7 +127,7 @@ export default function TodoApp() {
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
                             />
-                            <button className="bg-purple-600 text-white px-4 py-2 rounded w-full" type="submit">
+                            <button className="bg-purple-600 text-white px-4 py-2 rounded w-full" type="submit" disabled={loading}>
                                 Login
                             </button>
                             {error && <div className="text-red-500 mt-2">{error}</div>}
@@ -108,8 +150,9 @@ export default function TodoApp() {
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             required
+                            disabled={loading}
                         />
-                        <button className="bg-purple-600 text-white px-4 py-2 rounded-r" type="submit">
+                        <button className="bg-purple-600 text-white px-4 py-2 rounded-r" type="submit" disabled={loading}>
                             Add
                         </button>
                     </form>
@@ -120,6 +163,7 @@ export default function TodoApp() {
                                 <button
                                     className="text-red-500 hover:underline"
                                     onClick={() => handleDelete(todo._id)}
+                                    disabled={loading}
                                 >
                                     Delete
                                 </button>
@@ -132,3 +176,4 @@ export default function TodoApp() {
         </div>
     );
 }
+

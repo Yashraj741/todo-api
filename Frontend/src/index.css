@@ -1,6 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+/* @tailwind utilities; */
 
 :root {
   --text: #6b6375;
@@ -81,6 +80,7 @@ h1 {
   font-size: 56px;
   letter-spacing: -1.68px;
   margin: 32px 0;
+  color: #383a3c;
 
   @media (max-width: 1024px) {
     font-size: 36px;

@@ -8,7 +8,9 @@ exports.register = async (req, res) => {
         return res.status(400).json({ message: "Request body is missing or invalid" });
     }
     const { name, email, password } = req.body;
-
+    if (!name || !email || !password) {
+        return res.status(400).json({ message: "Name, email, and password are required" });
+    }
     try {
         let user = await User.findOne({ email });
         if (user) return res.status(400).json({ message: "User exists" });
@@ -22,14 +24,16 @@ exports.register = async (req, res) => {
         res.json({ token });
 
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.status(500).json({ message: "Server error. Please try again later." });
     }
 };
 
 // LOGIN
 exports.login = async (req, res) => {
     const { email, password } = req.body;
-
+    if (!email || !password) {
+        return res.status(400).json({ message: "Email and password are required" });
+    }
     try {
         const user = await User.findOne({ email });
         if (!user) return res.status(400).json({ message: "Invalid credentials" });
@@ -42,6 +46,6 @@ exports.login = async (req, res) => {
         res.json({ token });
 
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.status(500).json({ message: "Server error. Please try again later." });
     }
 };
