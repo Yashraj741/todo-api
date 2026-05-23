@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { login, getTodos, createTodo, deleteTodo, setAuthToken } from "./api";
+import { login, getTodos, createTodo, deleteTodo, updateTodo, setAuthToken } from "./api";
 import Register from "./Register";
 
 export default function TodoApp() {
@@ -12,6 +12,8 @@ export default function TodoApp() {
     const [showRegister, setShowRegister] = useState(false);
     const [loading, setLoading] = useState(false);
 
+    const [editId, setEditId] = useState(null)
+    const [editTitle, setEditTitle] = useState("")
 
     // Fetch todos when token changes (login/logout)
     const fetchTodos = async () => {
@@ -80,6 +82,24 @@ export default function TodoApp() {
         }
     };
 
+    const handleUpdate = async (id) => {
+        if (!editTitle.trim()) return;
+        setLoading(true);
+        setError("");
+        try {
+            await updateTodo(id, {
+                title: editTitle
+            });
+            setEditId(null);
+            setEditTitle("");
+            fetchTodos();
+        } catch (error) {
+            setError(error.response?.data?.message || "Failed to update todo");
+        } finally {
+            setLoading(false);
+        }
+    }
+
     const handleDelete = async (id) => {
         setLoading(true);
         setError("");
@@ -94,11 +114,13 @@ export default function TodoApp() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
-            <h1 className="text-3xl font-bold mb-4 bg-blue-200 rounded-xl p-2">Todo App</h1>
-            {loading && <div className="text-gray-600 mb-2">Loading...</div>}
+        <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-start p-6">
+            <div className="w-full max-w-3xl">
+                <h1 className="text-4xl font-extrabold mb-6 text-gray-800">Todo App</h1>
+                {loading && <div className="text-gray-600 mb-2">Loading...</div>}
             {!token ? (
-                showRegister ? (
+                <div className="flex flex-col items-center justify-center w-full min-h-[50vh]">
+                {showRegister ? (
                     <>
                         <Register onRegister={() => setShowRegister(false)} />
                         <button
@@ -110,9 +132,9 @@ export default function TodoApp() {
                     </>
                 ) : (
                     <>
-                        <form onSubmit={handleLogin} className="bg-white p-6 rounded shadow w-full max-w-xs mb-4">
+                        <form onSubmit={handleLogin} className="bg-white p-6 rounded shadow w-full max-w-sm mb-4">
                             <input
-                                className="border p-2 mb-2 w-full"
+                                className="border p-2 mb-2 w-full "
                                 type="email"
                                 placeholder="Email"
                                 value={email}
@@ -139,40 +161,76 @@ export default function TodoApp() {
                             Don't have an account? Register
                         </button>
                     </>
-                )
+                )}
+                </div>
             ) : (
                 <>
-                    <form onSubmit={handleAdd} className="flex mb-4">
+                    <form onSubmit={handleAdd} className="flex gap-0 mb-6 w-full max-w-3xl">
                         <input
-                            className="border p-2 rounded-l"
+                            className="flex-1 border border-gray-300 p-3 rounded-l-md focus:outline-none focus:ring-2 focus:ring-purple-300"
                             type="text"
-                            placeholder="Add todo"
+                            placeholder="Add a new todo"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             required
                             disabled={loading}
                         />
-                        <button className="bg-purple-600 text-white px-4 py-2 rounded-r" type="submit" disabled={loading}>
+                        <button className="bg-purple-600 text-white px-5 py-3 rounded-r-md hover:bg-purple-700" type="submit" disabled={loading}>
                             Add
                         </button>
                     </form>
-                    <ul className="w-full max-w-md">
-                        {todos.map((todo) => (
-                            <li key={todo._id} className="bg-white p-3 mb-2 rounded shadow flex justify-between items-center">
-                                <span>{todo.title}</span>
-                                <button
-                                    className="text-red-500 hover:underline"
-                                    onClick={() => handleDelete(todo._id)}
-                                    disabled={loading}
-                                >
-                                    Delete
-                                </button>
-                            </li>
-                        ))}
+
+                    <ul className="w-full space-y-3">
+                        {todos.length === 0 ? (
+                            <li className="text-gray-600">No todos yet. Add your first task.</li>
+                        ) : (
+                            todos.map((todo) => (
+                                <li key={todo._id} className="bg-white border border-gray-200 rounded-md shadow-sm p-4 flex items-center justify-between">
+                                    {editId === todo._id ? (
+                                        <div className="flex-1 flex items-center gap-3">
+                                            <input
+                                                type="text"
+                                                value={editTitle}
+                                                onChange={(e) => setEditTitle(e.target.value)}
+                                                className="flex-1 border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                                            />
+                                            <button onClick={() => handleUpdate(todo._id)} className="bg-green-500 text-white px-3 py-1 rounded">Save</button>
+                                            <button
+                                                onClick={() => {
+                                                    setEditId(null);
+                                                    setEditTitle("");
+                                                }}
+                                                className="px-3 py-1 rounded border"
+                                            >Cancel</button>
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <span className="text-gray-800">{todo.title}</span>
+                                            <div className="flex items-center gap-2">
+                                                <button
+                                                    onClick={() => {
+                                                        setEditId(todo._id);
+                                                        setEditTitle(todo.title);
+                                                    }}
+                                                    className="text-sm text-indigo-600 hover:underline"
+                                                >Edit</button>
+
+                                                <button
+                                                    onClick={() => handleDelete(todo._id)}
+                                                    disabled={loading}
+                                                    className="text-sm text-red-600 hover:underline"
+                                                >Delete</button>
+                                            </div>
+                                        </>
+                                    )}
+                                </li>
+                            ))
+                        )}
                     </ul>
                     {error && <div className="text-red-500 mt-2">{error}</div>}
                 </>
             )}
+        </div>
         </div>
     );
 }
