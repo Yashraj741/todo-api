@@ -1,0 +1,2 @@
+.typewriter-cursor { display: inline-block; margin-left: 6px; width: 1ch; animation: tw-blink 1s steps(1) infinite; }
+@keyframes tw-blink { 50% { opacity: 0; } }
