@@ -1,117 +1,274 @@
+# 📝 MERN Todo App
 
-# Fullstack Todo App
+A full-stack Todo Application built using the **MERN Stack** with secure authentication, session timeout, password change functionality, and a clean responsive UI.
 
-This repository contains a fullstack Todo application with a Node.js/Express backend and a React frontend. The backend uses MongoDB for data storage.
+---
 
-## Project Structure
+# ✨ Features
 
+✅ User Authentication (Login/Register)  
+✅ JWT Authentication  
+✅ Session Timeout Auto Logout ⏳  
+✅ Change Password 🔐  
+✅ Create / Edit / Delete Todos 📝  
+✅ Responsive UI 🎨  
+✅ Typewriter Welcome Animation ⌨️  
+✅ Session Storage Authentication  
+✅ Loading & Error Handling ⚡  
+
+---
+
+# 🛠️ Tech Stack
+
+## Frontend
+- React
+- Vite
+- Tailwind CSS
+- Axios
+
+## Backend
+- Node.js
+- Express.js
+- MongoDB
+- JWT
+- bcryptjs
+
+---
+
+# 📂 Folder Structure
+
+```bash
+project-root/
+│
+├── backend/
+│   ├── models/
+│   ├── routes/
+│   ├── middleware/
+│   ├── server.js
+│   └── package.json
+│
+├── frontend/
+│   ├── src/
+│   ├── public/
+│   └── package.json
+│
+└── README.md
 ```
-Backend/   # Node.js/Express backend
-Frontend/  # React frontend (Vite + Tailwind CSS)
+
+---
+
+# 🚀 Installation Guide
+
+# 1️⃣ Clone Repository
+
+```bash
+git clone https://github.com/your-username/your-repo-name.git
 ```
 
-## Prerequisites
+---
 
-- [Node.js](https://nodejs.org/) (v16 or higher recommended)
-- npm (comes with Node.js)
-- [MongoDB](https://www.mongodb.com/) (local installation or [MongoDB Atlas](https://www.mongodb.com/cloud/atlas))
+# 2️⃣ Open Project Folder
+
+```bash
+cd your-repo-name
+```
 
 ---
 
-## Backend Setup
+# 🔥 Backend Setup
 
-1. Navigate to the backend folder:
-   ```sh
-   cd Backend
-   ```
-2. Install dependencies:
-   ```sh
-   npm install
-   ```
-3. Create a `.env` file in the `Backend` directory with the following content:
-   ```env
-   MONGO_URI=your_mongodb_connection_string
-   JWT_SECRET=your_jwt_secret
-   PORT=5000
-   ```
-   - Replace `your_mongodb_connection_string` with your MongoDB URI (local or Atlas).
-   - Replace `your_jwt_secret` with a strong secret key.
-   - You can change `PORT` if you want the backend to run on a different port.
-4. Start the backend server:
-   ```sh
-   npm run dev
-   ```
-   - The server will run on [http://localhost:5000](http://localhost:5000) by default.
+## 📦 Move to Backend Folder
+
+```bash
+cd backend
+```
 
 ---
 
-## Frontend Setup
+## 📥 Install Backend Dependencies
 
-1. Navigate to the frontend folder:
-   ```sh
-   cd Frontend
-   ```
-2. Install dependencies:
-   ```sh
-   npm install
-   ```
-3. Start the frontend development server:
-   ```sh
-   npm run dev
-   ```
-   - The app will run on [http://localhost:5173](http://localhost:5173) by default (Vite default port).
-   - If you want to change the port, edit the `vite.config.js` file.
+```bash
+npm install
+```
 
----
+OR manually install:
 
-## MongoDB Setup
+```bash
+npm install express mongoose cors dotenv bcryptjs jsonwebtoken
+```
 
-### Local MongoDB
+Install nodemon:
 
-1. Download and install MongoDB from [mongodb.com](https://www.mongodb.com/try/download/community).
-2. Start the MongoDB server (usually with `mongod`).
-3. Use the connection string: `mongodb://localhost:27017/tododb`
-
-### MongoDB Atlas (Cloud)
-
-1. Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) and create a free cluster.
-2. Create a database user and get your connection string.
-3. Replace the `MONGO_URI` in your `.env` file with this string.
+```bash
+npm install -D nodemon
+```
 
 ---
 
-## Available Scripts
+# 📝 Create .env File
 
-### Backend
+Create a `.env` file inside backend folder:
 
-- `npm run dev` — Start backend in development mode (with nodemon)
-- `npm start` — Start backend in production mode
-
-### Frontend
-
-- `npm run dev` — Start frontend in development mode
-- `npm run build` — Build frontend for production
+```env
+PORT=3000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_secret_key
+```
 
 ---
 
-## Features
+# ▶️ Run Backend Server
 
-- User authentication (register/login)
-- Create, read, update, and delete todos (CRUD)
-- Protected routes using JWT authentication
-- Responsive UI with React and Tailwind CSS
+```bash
+npm run dev
+```
 
----
+✅ Backend running on:
 
-## Troubleshooting
-
-- Ensure MongoDB is running and accessible.
-- Check `.env` variables for typos or missing values.
-- If ports are in use, change the `PORT` in `.env` (backend) or update the Vite config (frontend).
-- For CORS issues, ensure the backend allows requests from the frontend's origin.
+```bash
+http://localhost:3000
+```
 
 ---
 
-## License
+# 🎨 Frontend Setup
 
-This project is licensed under the MIT License.
+## 📦 Open New Terminal
+
+Move to frontend folder:
+
+```bash
+cd frontend
+```
+
+---
+
+## 📥 Install Frontend Dependencies
+
+```bash
+npm install
+```
+
+OR manually install:
+
+```bash
+npm install react react-dom axios
+```
+
+Install Vite:
+
+```bash
+npm install -D vite
+```
+
+Install Tailwind CSS:
+
+```bash
+npm install -D tailwindcss postcss autoprefixer
+```
+
+---
+
+# ▶️ Run Frontend
+
+```bash
+npm run dev
+```
+
+✅ Frontend running on:
+
+```bash
+http://localhost:5173
+```
+
+---
+
+# 🔐 Authentication Flow
+
+- User Registers/Login
+- JWT Token Generated
+- Token stored in `sessionStorage`
+- Auto Logout after 10 minutes ⏳
+- Session Timer shown in footer
+- Manual Sign Out supported
+
+---
+
+# 🧠 Beginner Friendly Commands
+
+## Start Backend
+
+```bash
+cd backend
+npm run dev
+```
+
+---
+
+## Start Frontend
+
+```bash
+cd frontend
+npm run dev
+```
+
+---
+
+# 📦 Backend Dependencies
+
+```json
+{
+  "bcryptjs": "^3.0.3",
+  "cors": "^2.8.6",
+  "dotenv": "^17.4.2",
+  "express": "^5.2.1",
+  "jsonwebtoken": "^9.0.3",
+  "mongoose": "^9.6.1"
+}
+```
+
+---
+
+# 📦 Frontend Dependencies
+
+```json
+{
+  "axios": "^1.6.7",
+  "react": "^19.2.5",
+  "react-dom": "^19.2.5"
+}
+```
+
+---
+
+# 🧪 Future Improvements
+
+🚀 Dark Mode  
+🚀 Todo Categories  
+🚀 Drag & Drop Todos  
+🚀 Email Verification  
+🚀 Deploy on Render/Vercel  
+
+---
+
+# 👨‍💻 Author
+
+Made with ❤️ by Yashraj
+
+---
+
+# ⭐ Support
+
+If you like this project:
+
+⭐ Star the repository  
+🍴 Fork the repository  
+🛠️ Contribute to the project  
+
+---
+
+# 📜 License
+
+This project is open-source and available under the ISC License.
+
+Feel free to use, modify, and distribute it.
